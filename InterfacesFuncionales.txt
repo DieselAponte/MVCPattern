@@ -1,0 +1,90 @@
+// Interfaces Funcionales - Ejemplos en Java
+
+import java.util.function.*;
+import java.util.*;
+import java.util.stream.*;
+
+public class InterfacesFuncionalesDemo {
+    public static void main(String[] args) {
+
+        // 1. Predicate
+        Predicate<String> esLargo = s -> s.length() > 5;
+        System.out.println(esLargo.test("Hola")); // false
+
+        // 2. Function
+        Function<Integer, String> convertir = n -> "Número: " + n;
+        System.out.println(convertir.apply(7)); // "Número: 7"
+
+        // 3. Consumer
+        Consumer<String> imprimir = s -> System.out.println(s);
+        imprimir.accept("Hola Mundo"); // imprime "Hola Mundo"
+
+        // 4. Supplier
+        Supplier<Double> random = () -> Math.random();
+        System.out.println(random.get()); // 0.234234...
+
+        // 5. UnaryOperator
+        UnaryOperator<Integer> duplicar = x -> x * 2;
+        System.out.println(duplicar.apply(4)); // 8
+
+        // 6. BinaryOperator
+        BinaryOperator<Integer> sumar = (a, b) -> a + b;
+        System.out.println(sumar.apply(5, 3)); // 8
+
+        // 7. BiPredicate
+        BiPredicate<String, Integer> validar = (texto, numero) -> texto.length() == numero;
+        System.out.println(validar.test("Hola", 4)); // true
+
+        // 8. BiFunction
+        BiFunction<String, String, Integer> sumaLongitudes = (s1, s2) -> s1.length() + s2.length();
+        System.out.println(sumaLongitudes.apply("Hola", "Mundo")); // 9
+
+        // 9. BiConsumer
+        BiConsumer<String, Integer> mostrar = (nombre, edad) -> System.out.println(nombre + " tiene " + edad + " años");
+        mostrar.accept("Ana", 25); // Ana tiene 25 años
+
+        // 10. Otros ejemplos funcionales usando Stream API
+
+        // joining
+        List<String> palabras = Arrays.asList("Hola", "Mundo", "Stream");
+        String frase = palabras.stream()
+            .collect(Collectors.joining(" "));
+        System.out.println(frase); // "Hola Mundo Stream"
+
+        // partitioningBy
+        List<Integer> numeros = Arrays.asList(1, 2, 3, 4, 5, 6);
+        Map<Boolean, List<Integer>> paresImpares = numeros.stream()
+            .collect(Collectors.partitioningBy(n -> n % 2 == 0));
+        System.out.println(paresImpares);
+
+        // ParallelStream
+        List<Integer> numerosGrandes = IntStream.range(0, 1_000_000)
+            .boxed()
+            .collect(Collectors.toList());
+
+        long cantidad = numerosGrandes.parallelStream()
+            .filter(n -> n % 2 == 0)
+            .count();
+
+        System.out.println(cantidad);
+
+        // Optional usage
+        Optional<String> nombre = Optional.ofNullable(null);
+
+        String valor = nombre.orElse("Sin nombre");
+        System.out.println(valor); // "Sin nombre"
+
+        nombre.map(String::toUpperCase)
+              .ifPresent(System.out::println);
+    }
+
+    // Ejemplo de funcion pura
+    public static int cuadrado(int n) {
+        return n * n;
+    }
+
+    // Ejemplo de funcion de orden superior
+    public static int operar(Function<Integer, Integer> funcion, int valor) {
+        return funcion.apply(valor);
+    }
+}
