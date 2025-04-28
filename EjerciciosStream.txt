@@ -1,0 +1,149 @@
+import java.util.*;
+import java.util.stream.*;
+import java.util.function.*;
+import java.util.Comparator;
+
+// Clase principal
+public class EjerciciosStream {
+
+    // Record para los ejercicios que usan clases
+    record Persona(String nombre, int edad) {}
+    record Producto(String nombre, String categoria, double precio) {}
+
+    public static void main(String[] args) {
+
+        // Ejercicio 1: filter
+        System.out.println("Ejercicio 1: Filtrar elementos (filter)");
+        List<Integer> numeros1 = Arrays.asList(1, 2, 3, 4, 5, 6);
+        List<Integer> pares = numeros1.stream()
+            .filter(n -> n % 2 == 0)
+            .collect(Collectors.toList());
+        System.out.println(pares); // [2, 4, 6]
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 2: map
+        System.out.println("Ejercicio 2: Transformar elementos (map)");
+        List<String> palabras = Arrays.asList("hola", "mundo", "stream");
+        List<String> mayusculas = palabras.stream()
+            .map(String::toUpperCase)
+            .collect(Collectors.toList());
+        System.out.println(mayusculas); // [HOLA, MUNDO, STREAM]
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 3: sorted
+        System.out.println("Ejercicio 3: Ordenar elementos (sorted)");
+        List<Integer> numeros2 = Arrays.asList(5, 1, 4, 2, 3);
+        List<Integer> ordenados = numeros2.stream()
+            .sorted(Comparator.reverseOrder())
+            .collect(Collectors.toList());
+        System.out.println(ordenados); // [5, 4, 3, 2, 1]
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 4: distinct
+        System.out.println("Ejercicio 4: Eliminar duplicados (distinct)");
+        List<Integer> numeros3 = Arrays.asList(1, 2, 2, 3, 3, 3, 4);
+        List<Integer> sinDuplicados = numeros3.stream()
+            .distinct()
+            .collect(Collectors.toList());
+        System.out.println(sinDuplicados); // [1, 2, 3, 4]
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 5: count
+        System.out.println("Ejercicio 5: Contar elementos (count)");
+        List<String> nombres = Arrays.asList("Ana", "Cristina", "Pedro", "Alejandro");
+        long cantidad = nombres.stream()
+            .filter(nombre -> nombre.length() > 5)
+            .count();
+        System.out.println(cantidad); // 2
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 6: reduce
+        System.out.println("Ejercicio 6: Reducir elementos (reduce)");
+        List<Integer> numeros4 = Arrays.asList(1, 2, 3, 4, 5);
+        int suma = numeros4.stream()
+            .reduce(0, Integer::sum);
+        System.out.println(suma); // 15
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 7: collect toMap
+        System.out.println("Ejercicio 7: Crear un Map (collect toMap)");
+        List<String> palabras2 = Arrays.asList("java", "stream", "api");
+        Map<String, Integer> mapa = palabras2.stream()
+            .collect(Collectors.toMap(palabra -> palabra, palabra -> palabra.length()));
+        System.out.println(mapa); // {java=4, stream=6, api=3}
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 8: groupingBy
+        System.out.println("Ejercicio 8: Agrupar elementos (groupingBy)");
+        List<Persona> personas = Arrays.asList(
+            new Persona("Ana", 20),
+            new Persona("Luis", 30),
+            new Persona("Sofía", 20),
+            new Persona("Carlos", 30)
+        );
+
+        Map<Integer, List<Persona>> agrupadosPorEdad = personas.stream()
+            .collect(Collectors.groupingBy(Persona::edad));
+        System.out.println(agrupadosPorEdad);
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 9: min
+        System.out.println("Ejercicio 9: Encontrar el mínimo (min)");
+        List<Integer> numeros5 = Arrays.asList(5, 1, 9, 3, 7);
+        int minimo = numeros5.stream()
+            .min(Integer::compare)
+            .orElseThrow();
+        System.out.println(minimo); // 1
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio 10: flatMap
+        System.out.println("Ejercicio 10: Combinar Streams (flatMap)");
+        List<List<Integer>> listas = Arrays.asList(
+            Arrays.asList(1, 2),
+            Arrays.asList(3, 4),
+            Arrays.asList(5)
+        );
+
+        List<Integer> planos = listas.stream()
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
+        System.out.println(planos); // [1, 2, 3, 4, 5]
+
+        System.out.println("\n------------------------------");
+
+        // Ejercicio Final: Proyecto Integrador
+        System.out.println("Ejercicio Final: Proyecto Integrador");
+        List<Producto> productos = Arrays.asList(
+            new Producto("Laptop", "Electrónica", 1200),
+            new Producto("Mouse", "Electrónica", 25),
+            new Producto("Teclado", "Electrónica", 75),
+            new Producto("Camiseta", "Ropa", 30),
+            new Producto("Pantalón", "Ropa", 60),
+            new Producto("Zapatos", "Ropa", 90)
+        );
+
+        Map<String, Producto> productoMasBaratoPorCategoria = productos.stream()
+            .filter(p -> p.precio() > 50)
+            .map(p -> new Producto(p.nombre().toUpperCase(), p.categoria(), p.precio()))
+            .collect(Collectors.groupingBy(
+                Producto::categoria,
+                Collectors.collectingAndThen(
+                    Collectors.minBy(Comparator.comparingDouble(Producto::precio)),
+                    Optional::orElseThrow
+                )
+            ));
+
+        productoMasBaratoPorCategoria.forEach((categoria, producto) -> 
+            System.out.println(categoria + ": " + producto)
+        );
+    }
+}
